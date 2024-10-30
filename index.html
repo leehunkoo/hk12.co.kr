@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>준비중 입니다..coming soon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .fade-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.0s ease, transform 1.0s ease;
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .fade-section img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-height: 80vh;
+        }
+
+        .fade-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-text {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .fade-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #section4 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #section5 {
+            display: none;
+            width: 100%;
+            height: 500px; /* 지도 표시 영역 높이 */
+        }
+
+        .uniform-image {
+            width: 793px;
+            height: 1122px;
+            object-fit: cover;
+        }
+
+        #section1 {
+            margin-bottom: 0;
+        }
+        
+        #section2 {
+            margin-top: 0;
+        }
+
+        #section3, #section6 {
+            margin-top: 0;
+        }
+
+        @media (max-width: 600px) {
+            .fade-section h2 { font-size: 1.5em; }
+            .fade-section p { font-size: 1em; }
+        }
+    </style>
+
+    <!-- 네이버 지도 API 불러오기 (Client ID 필요) -->
+    <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=v0e78bso64"></script>
+</head>
+<body>
+    <main>
+        <section class="fade-section" id="section1">
+            <img src="https://github.com/leehunkoo/dlgnsrn0672.com/blob/main/Green%20White%20Festive%20Christmas%20Party%20Invitation%20Flyer/1.png?raw=true.png" alt="메인 시안 이미지" style="max-width: 100%; height: auto; margin-top: 20px;">
+        </section>
+        <section class="fade-section" id="section2">
+            <img src="https://github.com/leehunkoo/dlgnsrn0672.com/blob/main/Green%20White%20Festive%20Christmas%20Party%20Invitation%20Flyer/2.png?raw=true.png" alt="행사 일정 이미지" class="large-image">
+        </section>
+        <section class="fade-section" id="section3">
+            <img src="https://github.com/leehunkoo/dlgnsrn0672.com/blob/main/Green%20White%20Festive%20Christmas%20Party%20Invitation%20Flyer/3.png?raw=true.png" alt="행사 일정 이미지" class="large-image">
+        </section>
+        <section class="fade-section" id="section4">
+            <img src="https://github.com/leehunkoo/dlgnsrn0672.com/blob/main/Green%20White%20Festive%20Christmas%20Party%20Invitation%20Flyer/4.png?raw=true.png" alt="4번 섹션 이미지" class="large-image">
+            <button id="viewButton">VIEW</button>
+        </section>
+        
+        <!-- 네이버 지도 표시 섹션 -->
+        <section class="fade-section" id="section5">
+            <div id="map" style="width: 100%; height: 100%;"></div>
+            <button id="resetButton" style="display:none;">원래대로</button>
+        </section>
+
+        <section class="fade-section" id="section6">
+            <img src="https://github.com/leehunkoo/dlgnsrn0672.com/blob/main/Green%20White%20Festive%20Christmas%20Party%20Invitation%20Flyer/5.png?raw=true.png" alt="행사 일정 이미지" class="large-image">
+        </section>
+    </main>    
+    
+    <script>
+        const sections = document.querySelectorAll('.fade-section');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const ratio = entry.intersectionRatio;
+
+                if (ratio > 0) {
+                    entry.target.style.opacity = ratio;
+                    entry.target.style.transform = `translateY(${(1 - ratio) * 30}px)`;
+                    
+                    const texts = entry.target.querySelectorAll('.fade-text');
+                    texts.forEach(text => {
+                        text.classList.add('visible');
+                    });
+                } else {
+                    const texts = entry.target.querySelectorAll('.fade-text');
+                    texts.forEach(text => {
+                        text.classList.remove('visible');
+                    });
+                }
+            });
+        }, {
+            threshold: Array.from({ length: 101 }, (_, i) => i / 100)
+        });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // 네이버 지도 API 초기화
+        function initMap() {
+            const mapOptions = {
+                center: new naver.maps.LatLng(37.5665, 126.9780), // 서울 좌표
+                zoom: 10
+            };
+            const map = new naver.maps.Map('map', mapOptions);
+        }
+
+        // VIEW 버튼 클릭 시 지도를 표시
+        document.getElementById('viewButton').addEventListener('click', function() {
+            const section5 = document.getElementById('section5');
+            section5.style.display = 'flex';
+
+            // 부드럽게 스크롤 이동
+            window.scrollTo({
+                top: section5.offsetTop,
+                behavior: 'smooth'
+            });
+
+            // 지도 초기화 함수 호출
+            initMap();
+
+            // 원래대로 버튼 표시
+            document.getElementById('resetButton').style.display = 'block';
+        });
+
+        // 원래대로 버튼 클릭 시 숨기기
+        document.getElementById('resetButton').addEventListener('click', function() {
+            document.getElementById('section5').style.display = 'none';
+            this.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
